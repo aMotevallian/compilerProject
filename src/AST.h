@@ -26,7 +26,25 @@ public:
   virtual ~AST() {}
   virtual void accept(ASTVisitor &V) = 0;
 };
+class IfStatement : public AST
+{
+  Expr *condition;
+  AST *ThenStmt;
+  llvm::SmallVector<std::pair<Expr *, AST *>,8> ElifStmts;
+  AST *ElseStmt;
+  public:
+    IfStatement(Expr * Cond , AST *Then , llvm::SmallVector<std::pair<Expr *, AST *>,8> Elif, AST * Else):
+      condition(Cond), ThenStmt(Then) , ElifStmts(Elif) , ElseStmt(Else) {}
+    Expr *getCondition(){ return condition;}
+    AST * getThenStmt(){ return ThenStmt;}
+    llvm::SmallVector<std::pair<Expr *, AST *>,8> getElifStmts(){ return ElifStmts;}
+    AST * getElseStmt(){return ElseStmt;}
+    virtual void accept(ASTVisitor &V) override
+    {
+      V.visit(*this);
+    }
 
+};
 class Expr : public AST
 {
 public:
