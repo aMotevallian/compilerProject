@@ -18,6 +18,7 @@ public:
     ident,
     number,
     comma,
+    colon, //:
     semi_colon,
     plus,
     minus,
@@ -28,6 +29,11 @@ public:
     r_paren,
     KW_type,
     KW_int,
+    KW_if,
+    KW_end,
+    KW_begin,
+    KW_elif,
+    KW_else,
     mod, //%
     power, //^
     gt, //>
