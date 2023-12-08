@@ -62,10 +62,8 @@ AST *Parser::parseCalc()
   }
   if (Tok.is(Token::KW_if)){
 
-_ifStatement:
     advance();
-    Expr *E = parseExpr();
-_elseStatement:
+    Expr *Condition = parseExpr();
     if(expect(Token::colon)){
       goto _error;
     }
@@ -74,41 +72,47 @@ _elseStatement:
       goto _error;
     }
     advance();
-    while (Tok.getKind() != Token::KW_end)
-    {
-      if(expect(Token::ident))
-        goto _error;
-      Expr *Left = new Factor(Factor::Ident, Tok.getText());
-
-      advance();
-      if (expect(Token::equal))
-        goto _error;
-
-      BinaryOp::Operator Op = BinaryOp::Equal;
-      Expr *E;
-
-      advance();
-      E = parseExpr();
-
-      if (expect(Token::eoi))
-        goto _error;
-
-      Left = new BinaryOp(Op, Left, E);
-      advance();
-    }
+    AST *Thenstmt = nullptr;
+    llvm::SmallVector<std::pair<Expr *,AST *>,8> ElifStmts;
+    AST *ElseStmt = nullptr;
+    Thenstmt = parseCalc();
+    if(Thenstmt == nullptr)
+      goto _error;
+    if(expect(Token::KW_end))
+      goto _error;
     advance();
-    if (Tok.is(Token::eoi))
-    {
-      return ;
-    }
     if(Tok.is(Token::KW_elif)){
-      goto  _ifStatement;
+      advance();
+      Expr *ElifCondition = parseExpr();
+      if(expect(Token::colon))
+        goto _error;
+      advance();
+      if(expect(Token::KW_begin))
+        goto _error;
+      advance();
+      AST * ElifStmt = parseCalc();
+      if(ElifStmt == nullptr)
+        goto _error;
+      ElifStmts.push_back({ElifCondition , ElifStmt});
+      if(expect(Token::KW_end))
+        goto _error;
+      advance();
     }
     if(Tok.is(Token::KW_else)){
+
       advance();
-      goto  _elseStatement;
+      if(expect(Token::colon))
+        goto _error;
+      advance();
+      if(expect(Token::KW_begin))
+        goto _error;
+      advance();
+      ElseStmt = parseCalc();
+      if(expect(Token::KW_end))
+        goto _error;
+      advance();
     }
-        
+    return new IfStatement(Condition, Thenstmt , ElifStmts , ElseStmt);
   }
 
 _error:
