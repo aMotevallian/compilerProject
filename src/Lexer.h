@@ -27,7 +27,22 @@ public:
     l_paren,
     r_paren,
     KW_type,
-    KW_int
+    KW_int,
+    mod, //%
+    power, //^
+    gt, //>
+    lt, //<
+    gteq, //>=
+    lteq, //<=
+    isEqual, //==
+    notEqual, //!=
+    logicalAnd, //and
+    logicalOr,//or
+    minusEq, //-=
+    equalAssign, // =
+    slashEq, // /=
+    starEq,// *=
+    plusEq // +=
   };
 
 private:
