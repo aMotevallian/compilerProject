@@ -36,8 +36,36 @@ void Lexer::next(Token &token)
     while (charinfo::isLetter(*end))
       ++end;
     llvm::StringRef Name(BufferPtr, end - BufferPtr);
-    Token::TokenKind kind =
-        Name == "type" ? Token::KW_type : (Name == "int" ? Token::KW_int : Token::ident);
+    Token::TokenKind kind ;
+
+    if (Name == "type")
+    {
+      kind = Token::KW_type;
+    }else if (Name == "int")
+    {
+      kind = Token::KW_int;
+    }else if (Name == "if")
+    {
+      kind = Token::KW_if;
+    }else if (Name == "end")
+    {
+      kind = Token::KW_end;
+    }else if (Name == "begin")
+    {
+      kind = Token::KW_begin;
+    }else if (Name == "elif")
+    {
+      kind = Token::KW_elif;
+    }else if (Name == "else")
+    {
+      kind = Token::KW_else;
+    }else 
+    {
+      kind = Token::ident;
+    }
+    
+    // Token::TokenKind kind =
+    //     Name == "type" ? Token::KW_type : (Name == "int" ? Token::KW_int : Token::ident);
     formToken(token, end, kind);
     return;
   }
@@ -66,6 +94,7 @@ void Lexer::next(Token &token)
       CASE(')', Token::Token::r_paren);
       CASE(';', Token::Token::semi_colon);
       CASE(',', Token::Token::comma);
+      CASE(':', Token::Token::colon);
 #undef CASE
     default:
       formToken(token, BufferPtr + 1, Token::unknown);
