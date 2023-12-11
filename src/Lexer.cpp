@@ -59,6 +59,9 @@ void Lexer::next(Token &token)
     }else if (Name == "else")
     {
       kind = Token::KW_else;
+    }else if (Name == "loopc")
+    {
+      kind = Token::KW_loopc;
     }else 
     {
       kind = Token::ident;
