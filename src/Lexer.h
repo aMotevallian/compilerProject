@@ -34,6 +34,7 @@ public:
     KW_begin,
     KW_elif,
     KW_else,
+    KW_loopc,
     mod, //%
     power, //^
     gt, //>
