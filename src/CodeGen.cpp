@@ -120,6 +120,36 @@ namespace
         nameMap[Var] = Call;
       }
     };
+    virtual void visit(IfStatement &ifstmt) override{
+      llvm::Value *conditionValue = ifstmt.getCondition()->accept(*this);
+      llvm::Value *zeroval = llvm::ConstantInt::get(TheContext , 0);
+      llvm::Value *conditionResult = Builder.CreateICmpNE(zeroval , conditionValue , "ifCond");
+      llvm::Function *function =Builder.GetInsertBlock()->getParent();
+      llvm::BasicBlock *thenBlock = llvm::Create(TheContext , "then" , function);
+      llvm::BasicBlock *elseBlock = llvm::Create(TheContext , "else") ;      llvm::BasicBlock *elseBlock = llvm::Create(TheContext , "else" ;
+      llvm::BasicBlock *mergeBlock = llvm::Create(TheContext , "ifCond") ;
+      Builder.CreateCondBr(conditionResult , thenBlock , elseBlock);
+      Builder.SetInsertPoint(thenBlock);
+      ifstmt.getThenStmt()->accept(*this);
+      Builder.CreateBr(mergeBlock);
+      function->getBasicBlockList().push_back(elseBlock);
+      Builder.SetInsertPoint(elseBlock);
+
+      for(const auto &elifBlock : ifstmt.getElifStmts()){
+        llvm::Value *elifConditionValue = elifBlock.first->accept(*this);
+        llvm::Value *elifConditionResult = Builder.CreateICmpNE(elifConditionValue , zeroval , "elifCond");
+        llvm::BasicBlock *elifThenBlock = llvm::BasicBlock::Create(TheContext , "elif.then" , function);
+        Builder.CreateCondBr(elifConditionResult , elifThenBlock , elseBlock);
+        Builder.SetInsertPoint(elifThenBlock);
+        elifBlock.second->accept(*this);
+        Builder.CreateBr(mergeBlock);
+
+      }
+      function->getBasicBlockList().push_back(mergeBlock);
+      Builder.SetInsertPoint(mergeBlock);
+
+
+    }
   };
 } // namespace
 
