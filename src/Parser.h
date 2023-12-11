@@ -41,6 +41,10 @@ class Parser
   Expr *parseExpr();
   Expr *parseTerm();
   Expr *parseFactor();
+  Expr *parsePower();
+  Expr *parseRelational(); 
+  Expr *parseLogical();    
+  Expr *parseAssignment(); 
 
 public:
   Parser(Lexer &Lex) : Lex(Lex), HasError(false)

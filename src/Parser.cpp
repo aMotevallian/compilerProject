@@ -166,10 +166,10 @@ Expr *Parser::parseExpr()
 Expr *Parser::parseTerm()
 {
   Expr *Left = parseFactor();
-  while (Tok.isOneOf(Token::star, Token::slash))
+  while (Tok.isOneOf(Token::star, Token::slash , Token::mod))
   {
     BinaryOp::Operator Op =
-        Tok.is(Token::star) ? BinaryOp::Mul : BinaryOp::Div;
+        Tok.is(Token::star) ? BinaryOp::Mul : (Token::slash ? BinaryOp::Div : BinaryOp::Mod);
     advance();
     Expr *Right = parseFactor();
     Left = new BinaryOp(Op, Left, Right);
@@ -205,3 +205,99 @@ Expr *Parser::parseFactor()
   }
   return Res;
 }
+Expr *Parser::parsePower() {
+  Expr *Left = parseFactor();
+  while (Tok.is(Token::power)) {
+    advance();
+    Expr *Right = parseFactor();
+    Left = new BinaryOp(BinaryOp::Power, Left, Right);
+  }
+  return Left;
+}
+Expr *Parser::parseRelational() {
+  Expr *Left = parseExpr();
+  while (Tok.isOneOf(Token::lt, Token::gt, Token::gteq, Token::lteq, Token::isEqual, Token::notEqual)) {
+    BinaryOp::Operator Op;
+    switch (Tok.getKind()) {
+      case Token::lt:
+        Op = BinaryOp::Less;
+        break;
+      case Token::gt:
+        Op = BinaryOp::Greater;
+        break;
+      case Token::gteq:
+        Op = BinaryOp::GreaterEqual;
+        break;
+      case Token::lteq:
+        Op = BinaryOp::LessEqual;
+        break;
+      case Token::isEqual:
+        Op = BinaryOp::Equal;
+        break;
+      case Token::notEqual:
+        Op = BinaryOp::NotEqual;
+        break;
+      default:
+        error();
+        return nullptr;
+    }
+    advance();
+    Expr *Right = parseExpr();
+    Left = new BinaryOp(Op, Left, Right);
+  }
+  return Left;
+}
+
+Expr *Parser::parseLogical() {
+  Expr *Left = parseRelational();
+  while (Tok.isOneOf(Token::logicalAnd, Token::logicalOr)) {
+    BinaryOp::Operator Op;
+    switch (Tok.getKind()) {
+      case Token::logicalAnd:
+        Op = BinaryOp::LogicalAnd;
+        break;
+      case Token::logicalOr:
+        Op = BinaryOp::LogicalOr;
+        break;
+      default:
+        error();
+        return nullptr;
+    }
+    advance();
+    Expr *Right = parseRelational();
+    Left = new BinaryOp(Op, Left, Right);
+  }
+  return Left;
+}
+
+Expr *Parser::parseAssignment() {
+  Expr *Left = parseLogical();
+  while (Tok.isOneOf(Token::equalAssign, Token::minusEq, Token::slashEq, Token::starEq, Token::plusEq)) {
+    BinaryOp::Operator Op;
+    switch (Tok.getKind()) {
+      case Token::equalAssign:
+        Op = BinaryOp::EqualAssign;
+        break;
+      case Token::minusEq:
+        Op = BinaryOp::MinusEqual;
+        break;
+      case Token::slashEq:
+        Op = BinaryOp::SlashEqual;
+        break;
+      case Token::starEq:
+        Op = BinaryOp::StarEqual;
+        break;
+      case Token::plusEq:
+        Op = BinaryOp::PlusEqual;
+        break;
+      default:
+        error();
+        return nullptr;
+    }
+    advance();
+    Expr *Right = parseLogical();
+    Left = new BinaryOp(Op, Left, Right);
+  }
+  return Left;
+}
+
