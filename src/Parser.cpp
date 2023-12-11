@@ -114,7 +114,34 @@ AST *Parser::parseCalc()
     }
     return new IfStatement(Condition, Thenstmt , ElifStmts , ElseStmt);
   }
-
+  if (Tok.is(Token::KW_loopc)){
+    advance();
+    Expr *Condition = parseExpr();
+    if(expect(Token::colon)){
+      goto _error;
+    }
+    advance();
+    if(expect(Token::KW_begin)){
+      goto _error;
+    }
+    advance();
+    llvm::SmallVector<Expr *, 8> LoopBody;
+    while (!Token.is(Token::KW_end) && !Token.is(Token::eoi)){
+      Expr *Expr = parseExpr();
+      if(!Expr){
+        goto _error;
+      }
+      LoopBody.push_back(Expr);
+    }
+    if (consume(Token::KW_end))
+    {
+      return new loopcStatement(Condition, LoopBody)
+    }
+    else{
+      goto _error;
+    }
+    
+  }
 _error:
   while (Tok.getKind() != Token::eoi)
     advance();

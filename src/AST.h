@@ -45,6 +45,27 @@ class IfStatement : public AST
     }
 
 };
+class loopcStatement : public AST
+{
+  Expr *condition;
+  llvm::SmallVector<Expr *,8> body;
+
+public:
+  loopcStatement(Expr *cond , llvm::SmallVector<Expr *,8> Body):
+            condition(cond),
+            body(Body){}
+  Expr *getCondition(){
+    return condition;
+  }
+  llvm::SmallVector<Expr *,8> getBody(){
+    return body;
+  }
+  virtual void accept(ASTVisitor &V) override
+  {
+    V.visit(*this);
+  }
+}
+
 class Expr : public AST
 {
 public:
