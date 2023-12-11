@@ -45,6 +45,42 @@ AST *Parser::parseCalc()
         E = parseExpr();
     }
 
+     if (Tok.is(Token::mod)
+    {
+        advance();
+        E = parseExpr();
+    }
+
+     if (Tok.is(Token::power))
+    {
+        advance();
+        E = parseExpr();
+    }
+
+     if (Tok.is(Token::isEqual))
+    {
+        advance();
+        E = parseExpr();
+    }
+
+     if (Tok.is(Token::logicalAnd))
+    {
+        advance();
+        E = parseExpr();
+    }
+
+     if (Tok.is(Token::logicalOr))
+    {
+        advance();
+        E = parseExpr();
+    }
+
+     if (Tok.is(Token::gteq))
+    {
+        advance();
+        E = parseExpr();
+    }
+
 
     if (Tok.is(Token::lteq))
     {

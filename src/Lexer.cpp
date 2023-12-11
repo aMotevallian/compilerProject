@@ -79,30 +79,33 @@ void Lexer::next(Token &token)
     switch (*BufferPtr) {
 #define CASE(ch, tok) \
 case ch: formToken(token, BufferPtr + 1, tok); break
-CASE('+', Token::plus);
-CASE('-', Token::minus);
-CASE('*', Token::star);
-CASE('/', Token::slash);
+
+
 CASE('(', Token::Token::l_paren);
 CASE(')', Token::Token::r_paren);
+CASE('^', Token::Token::power);
+CASE('*', Token::star);
+CASE('/', Token::slash);
+CASE('%', Token::Token::mod);
+CASE('+', Token::plus);
+CASE('-', Token::minus);
+CASE('>', Token::Token::gt);
+CASE('<', Token::Token::lt);
+CASE('>=', Token::Token::gteq);
+CASE('<=', Token::Token::lteq);
+CASE('==', Token::Token::isEqual);
+CASE('!=', Token::Token::notEqual);
+CASE('and', Token::Token::logicalAnd);
+CASE('or', Token::Token::logicalOr);
+CASE('-=', Token::Token::minusEq);
+CASE('/=', Token::Token::slashEq);
+CASE('*=', Token::Token::starEq);
+CASE('+=', Token::Token::plusEq);
+CASE('=', Token::Token::equalAssign);
 CASE(':', Token::Token::colon);
 CASE(',', Token::Token::comma);
 CASE(';', Token::Token::eoi);
-CASE('*=', Token::Token::starEq);
-CASE('+=', Token::Token::plusEq);
-CASE('/=', Token::Token::slashEq);
-CASE('=', Token::Token::equalAssign);
-CASE('-=', Token::Token::minusEq);
-CASE('or', Token::Token::logicalOr);
-CASE('and', Token::Token::logicalAnd);
-CASE('!=', Token::Token::notEqual);
-CASE('==', Token::Token::isEqual);
-CASE('<=', Token::Token::lteq);
-CASE('>=', Token::Token::gteq);
-CASE('>', Token::Token::gt);
-CASE('<', Token::Token::lt);
-CASE('^', Token::Token::power);
-CASE('%', Token::Token::mod);
+
 
 
 #undef CASE
