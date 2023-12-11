@@ -38,7 +38,7 @@ class IfStatement : public AST
       condition(Cond), ThenStmt(Then) , ElifStmts(Elif) , ElseStmt(Else) {}
     Expr *getCondition(){ return condition;}
     AST * getThenStmt(){ return ThenStmt;}
-    llvm::SmallVector<std::pair<Expr *, AST *>,8> getElifStmts(){ return ElifStmts;}
+    llvm::SmallVector<std::pair<Expr *, AST *>,8> &getElifStmts(){ return ElifStmts;}
     AST * getElseStmt(){return ElseStmt;}
     virtual void accept(ASTVisitor &V) override
     {
