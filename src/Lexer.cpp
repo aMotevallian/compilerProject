@@ -85,9 +85,26 @@ CASE('*', Token::star);
 CASE('/', Token::slash);
 CASE('(', Token::Token::l_paren);
 CASE(')', Token::Token::r_paren);
-CASE('=', Token::Token::colon);
+CASE(':', Token::Token::colon);
 CASE(',', Token::Token::comma);
 CASE(';', Token::Token::eoi);
+CASE('*=', Token::Token::starEq);
+CASE('+=', Token::Token::plusEq);
+CASE('/=', Token::Token::slashEq);
+CASE('=', Token::Token::equalAssign);
+CASE('-=', Token::Token::minusEq);
+CASE('or', Token::Token::logicalOr);
+CASE('and', Token::Token::logicalAnd);
+CASE('!=', Token::Token::notEqual);
+CASE('==', Token::Token::isEqual);
+CASE('<=', Token::Token::lteq);
+CASE('>=', Token::Token::gteq);
+CASE('>', Token::Token::gt);
+CASE('<', Token::Token::lt);
+CASE('^', Token::Token::power);
+CASE('%', Token::Token::mod);
+
+
 #undef CASE
     default:
       formToken(token, BufferPtr + 1, Token::unknown);

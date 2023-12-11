@@ -33,6 +33,75 @@ AST *Parser::parseCalc()
       advance();
     }
 
+     if (Tok.is(Token::equal))
+    {
+        advance();
+        E = parseExpr();
+    }
+
+    if (Tok.is(Token::gteq))
+    {
+        advance();
+        E = parseExpr();
+    }
+
+
+    if (Tok.is(Token::lteq))
+    {
+        advance();
+        E = parseExpr();
+    }
+
+    if (Tok.is(Token::lt))
+    {
+        advance();
+        E = parseExpr();
+    }
+
+    if (Tok.is(Token::gt))
+    {
+        advance();
+        E = parseExpr();
+    }
+
+    if (Tok.is(Token::equalAssign))
+    {
+        advance();
+        E = parseExpr();
+    }
+
+    if (Tok.is(Token::notEqual))
+    {
+        advance();
+        E = parseExpr();
+    }
+
+    if (Tok.is(Token::slashEq))
+    {
+        advance();
+        E = parseExpr();
+    }
+
+    if (Tok.is(Token::plusEq))
+    {
+        advance();
+        E = parseExpr();
+    }
+
+    if (Tok.is(Token::minusEq))
+    {
+        advance();
+        E = parseExpr();
+    }
+
+    if (Tok.is(Token::starEq))
+    {
+        advance();
+        E = parseExpr();
+    }
+
+
+
     if (consume(Token::semi_colon))
       goto _error;
 
@@ -140,7 +209,7 @@ AST *Parser::parseCalc()
     else{
       goto _error;
     }
-    
+
   }
 _error:
   while (Tok.getKind() != Token::eoi)
@@ -194,7 +263,7 @@ Expr *Parser::parseFactor()
     advance();
     Res = parseExpr();
     if (!consume(Token::r_paren))
-      break;  
+      break;
   default:
     if (!Res)
       error();
