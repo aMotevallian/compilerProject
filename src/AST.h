@@ -98,16 +98,28 @@ public:
   }
 };
 
-class BinaryOp : public Expr
-{
+class BinaryOp : public Expr {
 public:
-  enum Operator
-  {
+  enum Operator {
     Plus,
     Minus,
     Mul,
     Div,
-    Equal
+    Equal,
+    Power,         // ^ added
+    Mod,           // % added
+    Greater,       // > added
+    Less,          // < added
+    GreaterEqual,  // >= added
+    LessEqual,     // <= added
+    NotEqual,      // != added
+    LogicalAnd,    // and added
+    LogicalOr,     // or added
+    MinusEqual,    // -= added
+    SlashEqual,    // /= added
+    StarEqual,     // *= added
+    PlusEqual,     // += added
+    EqualAssign    // = added
   };
 
 private:
@@ -118,14 +130,16 @@ private:
 public:
   BinaryOp(Operator Op, Expr *L, Expr *R)
       : Op(Op), Left(L), Right(R) {}
-  Expr *getLeft() { return Left; }
-  Expr *getRight() { return Right; }
-  Operator getOperator() { return Op; }
-  virtual void accept(ASTVisitor &V) override
-  {
+
+  Expr *getLeft() const { return Left; }
+  Expr *getRight() const { return Right; }
+  Operator getOperator() const { return Op; }
+
+  virtual void accept(ASTVisitor &V) override {
     V.visit(*this);
   }
 };
+;
 
 class typeDecl : public AST
 {
