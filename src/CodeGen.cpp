@@ -150,6 +150,24 @@ namespace
 
 
     }
+    virtual void visit(loopcStatement &loopcStmt) override{
+      llvm::Function *function =Builder.GetInsertBlock()->getParent();
+      llvm::BasicBlock *loopCondBlock = llvm::BasicBlock::Create(Context,"loopCond",function);
+      llvm::BasicBlock *loopBodyBlock = llvm::BasicBlock::Create(Context,"loopBody",function);
+      llvm::BasicBlock *loopEndBlock = llvm::BasicBlock::Create(Context,"loopEnd",function);
+      Builder.CreateBr(loopCondBlock);
+      Builder.SetInsertPoint(loopCondBlock);
+      llvm::Value *loopCondition = loopcStmt.getCondition()->accept(*this);
+      llvm::Value *zeroval = llvm::ConstantInt::get(Int32Ty, 0);
+      llvm::Value *loopConditionResult = Builder.CreateICmpNE(zeroval,loopCondition,"loopCond");
+      Builder.CreateCondBr(loopConditionResult, loopBodyBlock,loopEndBlock);
+      function->getBasicBlockList().push_back(loopBodyBlock);
+      Builder.SetInsertPoint(loopBodyBlock);
+      loopcStmt.getBody()->accept(*this);
+      Builder.CreateBr(loopCondBlock);
+      function->getBasicBlockList().push_back(loopEndBlock);
+      Builder.SetInsertPoint(loopEndBlock);
+    }
   };
 } // namespace
 
