@@ -18,6 +18,7 @@ public:
   virtual void visit(Factor &) = 0;
   virtual void visit(BinaryOp &) = 0;
   virtual void visit(typeDecl &) = 0;
+  virtual void visit(IfStatement &) = 0;
 };
 
 class AST
