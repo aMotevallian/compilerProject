@@ -22,9 +22,9 @@ public:
     semi_colon,
     plus,
     minus,
+    equal,
     star,
     slash,
-    equal,
     l_paren,
     r_paren,
     KW_type,
@@ -37,8 +37,8 @@ public:
     KW_loopc,
     mod, //%
     power, //^
-    gt, //>
     lt, //<
+    gt, //>
     gteq, //>=
     lteq, //<=
     isEqual, //==
@@ -48,8 +48,8 @@ public:
     minusEq, //-=
     equalAssign, // =
     slashEq, // /=
-    starEq,// *=
     plusEq // +=
+    starEq,// *=
   };
 
 private:
@@ -75,14 +75,12 @@ public:
   }
 };
 
-class Lexer
-{
+class Lexer {
   const char *BufferStart;
   const char *BufferPtr;
 
 public:
-  Lexer(const llvm::StringRef &Buffer)
-  {
+  Lexer(const llvm::StringRef &Buffer) {
     BufferStart = Buffer.begin();
     BufferPtr = BufferStart;
   }

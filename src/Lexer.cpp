@@ -1,24 +1,18 @@
 #include "Lexer.h"
 
-namespace charinfo
-{
-  LLVM_READNONE inline bool isWhitespace(char c)
-  {
-    return c == ' ' || c == '\t' || c == '\f' || c == '\v' ||
-           c == '\r' || c == '\n';
-  }
-
-  LLVM_READNONE inline bool isDigit(char c)
-  {
-    return c >= '0' && c <= '9';
-  }
-
-  LLVM_READNONE inline bool isLetter(char c)
-  {
-    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
-  }
+namespace charinfo {
+LLVM_READNONE inline bool isWhitespace(char c) {
+  return c == ' ' || c == '\t' || c == '\f' || c == '\v' ||
+         c == '\r' || c == '\n';
 }
 
+LLVM_READNONE inline bool isDigit(char c) {
+  return c >= '0' && c <= '9';
+}
+
+LLVM_READNONE inline bool isLetter(char c) {
+  return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+}
 void Lexer::next(Token &token)
 {
   while (*BufferPtr && charinfo::isWhitespace(*BufferPtr))
@@ -62,11 +56,11 @@ void Lexer::next(Token &token)
     }else if (Name == "loopc")
     {
       kind = Token::KW_loopc;
-    }else 
+    }else
     {
       kind = Token::ident;
     }
-    
+
     // Token::TokenKind kind =
     //     Name == "type" ? Token::KW_type : (Name == "int" ? Token::KW_int : Token::ident);
     formToken(token, end, kind);
@@ -82,22 +76,18 @@ void Lexer::next(Token &token)
   }
   else
   {
-    switch (*BufferPtr)
-    {
-#define CASE(ch, tok)                     \
-  case ch:                                \
-    formToken(token, BufferPtr + 1, tok); \
-    break
-      CASE('+', Token::plus);
-      CASE('-', Token::minus);
-      CASE('*', Token::star);
-      CASE('/', Token::slash);
-      CASE('=', Token::equal);
-      CASE('(', Token::Token::l_paren);
-      CASE(')', Token::Token::r_paren);
-      CASE(';', Token::Token::semi_colon);
-      CASE(',', Token::Token::comma);
-      CASE(':', Token::Token::colon);
+    switch (*BufferPtr) {
+#define CASE(ch, tok) \
+case ch: formToken(token, BufferPtr + 1, tok); break
+CASE('+', Token::plus);
+CASE('-', Token::minus);
+CASE('*', Token::star);
+CASE('/', Token::slash);
+CASE('(', Token::Token::l_paren);
+CASE(')', Token::Token::r_paren);
+CASE('=', Token::Token::colon);
+CASE(',', Token::Token::comma);
+CASE(';', Token::Token::eoi);
 #undef CASE
     default:
       formToken(token, BufferPtr + 1, Token::unknown);
