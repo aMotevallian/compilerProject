@@ -95,11 +95,14 @@ public:
   ValueKind getKind() { return Kind; }
   llvm::StringRef getVal() { return Val; }
   bool isLive() const override { return Live; }
-  void setLive(bool IsLive) { Live = IsLive; } 
+  void setLive(bool liveness) { Live = liveness; } 
 
   virtual void accept(ASTVisitor &V) override
   {
-    V.visit(*this);
+    if (isLive())
+    {
+      V.visit(*this);
+    }
   }
 };
 
