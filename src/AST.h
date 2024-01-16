@@ -27,6 +27,7 @@ class AST
 public:
   virtual ~AST() {}
   virtual void accept(ASTVisitor &V) = 0;
+  virtual bool isLive() const { return false; } 
 };
 class IfStatement : public AST
 {
@@ -86,12 +87,16 @@ public:
 private:
   ValueKind Kind;
   llvm::StringRef Val;
+  bool Live;
 
 public:
-  Factor(ValueKind Kind, llvm::StringRef Val)
-      : Kind(Kind), Val(Val) {}
+  Factor(ValueKind Kind, llvm::StringRef Val, bool Live = false)
+      : Kind(Kind), Val(Val), Live(Live) {}
   ValueKind getKind() { return Kind; }
   llvm::StringRef getVal() { return Val; }
+  bool isLive() const override { return Live; }
+  void setLive(bool IsLive) { Live = IsLive; } 
+
   virtual void accept(ASTVisitor &V) override
   {
     V.visit(*this);

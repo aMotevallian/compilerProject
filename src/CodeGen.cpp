@@ -48,7 +48,7 @@ namespace
 
     virtual void visit(Factor &Node) override
     {
-      if (Node.getKind() == Factor::Ident)
+      if (Node.getKind() == Factor::Ident  && Node.isLive())
       {
         V = nameMap[Node.getVal()];
       }
