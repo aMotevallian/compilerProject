@@ -5,6 +5,9 @@
 
 class CodeGen
 {
+  void eliminateDeadCode(Module *M);
+  void eliminateDeadVariables(Module *M, ToIRVisitor &ToIR);
+
 public:
  void compile(AST *Tree);
 

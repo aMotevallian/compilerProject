@@ -3,6 +3,10 @@
 #include "llvm/IR/IRBuilder.h"
 #include "llvm/IR/LLVMContext.h"
 #include "llvm/Support/raw_ostream.h"
+#include "llvm/Analysis/CFGPrinter.h"
+#include "llvm/IR/InstIterator.h"
+#include "llvm/Transforms/Utils/BasicBlockUtils.h"
+#include "llvm/IR/ValueSymbolTable.h"
 
 using namespace llvm;
 
@@ -171,11 +175,83 @@ namespace
   };
 } // namespace
 
+void CodeGen::eliminateDeadCode(Module *M)
+{
+  // Iterate through functions in the module
+  for (auto &Func : *M)
+  {
+    std::vector<Instruction *> DeadInstructions;
+    // Iterate through basic blocks in the function
+    for (auto &BB : Func)
+    {
+      // Iterate through instructions in the basic block
+      for (auto &Inst : BB)
+      {
+        // Check if the instruction is dead
+        if (llvm::isInstructionTriviallyDead(&Inst))
+        {
+          DeadInstructions.push_back(&Inst);
+        }
+      }
+    }
+
+    // Remove dead instructions
+    for (auto *Inst : DeadInstructions)
+    {
+      Inst->eraseFromParent();
+    }
+  }
+}
+
+void CodeGen::eliminateDeadVariables(Module *M, ToIRVisitor &ToIR)
+{
+  // Identify live variables using liveness analysis
+  std::set<Value *> LiveVariables;
+  for (auto &Func : *M)
+  {
+    for (auto &BB : Func)
+    {
+      for (auto &Inst : BB)
+      {
+        for (auto &Op : Inst.operands())
+        {
+          if (isa<Instruction>(Op) || isa<Argument>(Op))
+          {
+            LiveVariables.insert(Op);
+          }
+        }
+      }
+    }
+  }
+
+  // Remove dead variables
+  for (auto &Func : *M)
+  {
+    for (auto &BB : Func)
+    {
+      for (auto &Inst : BB)
+      {
+        if (isa<AllocaInst>(Inst))
+        {
+          auto *Alloca = cast<AllocaInst>(&Inst);
+          if (!LiveVariables.count(Alloca))
+          {
+            // If the variable is not live, remove the alloca instruction
+            Alloca->eraseFromParent();
+          }
+        }
+      }
+    }
+  }
+}
+
 void CodeGen::compile(AST *Tree)
 {
   LLVMContext Ctx;
   Module *M = new Module("calc.expr", Ctx);
   ToIRVisitor ToIR(M);
   ToIR.run(Tree);
+  eliminateDeadCode(M);
+  eliminateDeadVariables(M, ToIR);
   M->print(outs(), nullptr);
 }
